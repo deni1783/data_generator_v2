@@ -207,7 +207,7 @@ ALPHABET_HEX = ['41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b'
 #   date, time, timestamp,
 #   decimal, double, real,
 #   tinyint, smallint, integer, bigint
-#   un_tinyint, un_smallint, un_integer, un_int, un_bigint
+#   un_tinyint, un_smallint, un_integer, un_bigint
 SYNONYMS_DICT = {
     'int(1)': 'tinyint',
     'int(2)': 'smallint',
