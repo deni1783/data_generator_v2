@@ -437,7 +437,7 @@ def start_generation():
 
 if __name__ == '__main__':
     start_time = time.time()
-    print('Started at', datetime.datetime.utcfromtimestamp(start_time), 'UTC\n')
+    print('Started at', datetime.datetime.utcfromtimestamp(start_time), 'UTC')
 
     start_generation()
 
