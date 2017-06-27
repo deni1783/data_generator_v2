@@ -102,16 +102,21 @@ def pars_string_from_ddl(main_string: str):
     column_name = normalize_string.split()[0]
 
     if 'not null' in normalize_string:
-        data_type = normalize_string[len(column_name): normalize_string.index('not null')]
+        data_type = normalize_string[len(column_name): normalize_string.index('not null')].strip()
         is_nullable = False
 
     elif 'null' in normalize_string:
-        data_type = normalize_string[len(column_name): normalize_string.index('null')]
+        data_type = normalize_string[len(column_name): normalize_string.index('null')].strip()
         is_nullable = True
 
     else:
         data_type = normalize_string[len(column_name):]
         is_nullable = True
+
+    # Убираем из типа 'default' и все что после него, если он есть
+    if 'default' in data_type:
+        data_type = data_type[:data_type.index('default')].strip()
+
     return column_name, data_type, is_nullable
 
 
