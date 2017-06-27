@@ -1,5 +1,7 @@
 Для запуска генератора необходимо установить интерпретатор Python версии 3.x и выше
-Ссылка для скачивания: https://www.python.org/ftp/python/3.6.1/python-3.6.1.exe
+Ссылка для скачивания (Windows): https://www.python.org/ftp/python/3.6.1/python-3.6.1.exe
+Установка в linux:
+  В терминале ввести: sudo apt-get install python3
 
 Принцип работы генератора данных:
   1. Парсится файл DDL создания таблицы
