@@ -255,5 +255,7 @@ SYNONYMS_DICT = {
     'un_int': 'un_integer',
 
     'bit': 'boolean',
-    'bool': 'boolean'
+    'bool': 'boolean',
+    'uniqueidentifier': 'binary(16)',
+    'float': 'real'
 }

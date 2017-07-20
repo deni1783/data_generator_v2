@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Этот файл временно перезаписывает настройки из Settings.py
 
-# COUNT_STRINGS = 1000000
+COUNT_STRINGS = 100
 # MAX_COUNT_SUBPROCESS = 4
 
 # COUNT_OUTPUT_FILE = 4
