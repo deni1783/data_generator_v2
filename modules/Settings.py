@@ -252,5 +252,8 @@ SYNONYMS_DICT = {
     'blob': 'binary({})'.format(MAX_LENGTH_BLOB),
 
     'double precision': 'double',
-    'un_int': 'un_integer'
+    'un_int': 'un_integer',
+
+    'bit': 'boolean',
+    'bool': 'boolean'
 }

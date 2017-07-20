@@ -360,4 +360,11 @@ def get_timestamp_tz(length=False, precision=False, scale=False, is_null=False):
     else:
         return result
 
+
+def get_boolean(length=False, precision=False, scale=False, is_null=False):
+    if is_null:
+        if random.randint(0, 100) + PERCENT_FOR_NULL_VALUES > 100:
+            return VALUE_FOR_NULL
+    return random.randint(0, 1)
+
 ###################################

@@ -35,6 +35,8 @@ BASE_DATA_TYPES = {
     'un_smallint': get_un_smallint,
     'un_integer': get_un_integer,
     'un_bigint': get_un_bigint,
+
+    'boolean': get_boolean
 }
 
 
