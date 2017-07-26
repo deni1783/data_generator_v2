@@ -128,13 +128,13 @@ def get_decimal(length=False, precision=False, scale=False, is_null=False):
 def get_double(length=False, precision=False, scale=False, is_null=False):
     dbl_max_prec = random.randint(DOUBLE_MIN_PRECISION, DOUBLE_MAX_PRECISION)
     dbl_max_scale = random.randint(DOUBLE_MIN_SCALE, DOUBLE_MAX_SCALE)
-    return get_decimal(dbl_max_prec + dbl_max_scale, dbl_max_scale)
+    return get_decimal(precision=dbl_max_prec + dbl_max_scale, scale=dbl_max_scale)
 
 
 def get_real(length=False, precision=False, scale=False, is_null=False):
     dbl_max_prec = random.randint(FLOAT_MIN_PRECISION, FLOAT_MAX_PRECISION)
     dbl_max_scale = random.randint(FLOAT_MIN_SCALE, FLOAT_MAX_SCALE)
-    return get_decimal(dbl_max_prec + dbl_max_scale, dbl_max_scale)
+    return get_decimal(precision=dbl_max_prec + dbl_max_scale, scale=dbl_max_scale)
 
 
 ###################################
@@ -367,4 +367,14 @@ def get_boolean(length=False, precision=False, scale=False, is_null=False):
             return VALUE_FOR_NULL
     return str(random.randint(0, 1))
 
+
+def get_interval(length=False, precision=False, scale=False, is_null=False):
+    if is_null:
+        if random.randint(0, 100) + PERCENT_FOR_NULL_VALUES > 100:
+            return VALUE_FOR_NULL
+    years = random.randint(1, 9999) + ' years'
+    months = random.randint(1, 11) + ' months'
+    days = random.randint(1, 28) + ' days'
+    hours = random.randint(1, 23) + ' hours'
+    seconds = random.randint(1, 59) + ' seconds'
 ###################################

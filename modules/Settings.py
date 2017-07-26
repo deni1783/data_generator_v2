@@ -26,7 +26,6 @@ MAX_COUNT_SUBPROCESS = 4
 # Параметр - целочисленное число
 COUNT_OUTPUT_FILE = 4
 
-
 # Нужно ли объеденить все файлы в один
 # Параметр - bool  (True/False)
 MERGE_ALL_FILE_TO_SINGLE = True
@@ -53,7 +52,6 @@ DELIMITER_ROW = '\n'
 WRAP_STRINGS = False
 WRAP_DATETIME = False
 
-
 #  Финальный вид такой:
 # WRAP_BINARY_STRINGS + MASC_FOR_BINARY + WRAP_BINARY_VALUE + VALUE + WRAP_BINARY_VALUE + WRAP_BINARY_STRINGS
 # Например при WRAP_BINARY_STRINGS = '"' WRAP_BINARY_VALUE = "'" MASC_FOR_BINARY = '0x'
@@ -73,15 +71,12 @@ VALUE_FOR_NULL = 'NULL'
 # Параметр - целоцисленное значение
 PERCENT_FOR_NULL_VALUES = 10
 
-
 # Определяет разделитель между double и real
 # float(x) = double, при  x > FLOAT_PRECISION
 # float(x) = real,   при  FLOAT_PRECISION <= x
 # float = real, (без указания длины)
 # Параметр - целоцисленное значение
 FLOAT_PRECISION = 24
-
-
 
 # Значения по умолчанию для количества фракционных секунд
 # Параметр - целоцисленное значение
@@ -92,19 +87,13 @@ DEFAULT_VALUE_TIMESTAMP_FRACTIONAL_SECONDS = 6
 # Для типа time
 DEFAULT_VALUE_TIME_FRACTIONAL_SECONDS = 3
 
-
-
 # Максимальная длина для ЛОБов
 MAX_LENGTH_CLOB = 100
 MAX_LENGTH_BLOB = 100
 
-
 # Дефолтная длина для строк и бинарных строк
 DEFAULT_VALUE_CHAR = 1
 DEFAULT_VALUE_BYTE = 1
-
-
-
 
 # Диапазон количества знаков ДО разделителя, для типа DOUBLE
 DOUBLE_MIN_PRECISION = 1
@@ -114,7 +103,6 @@ DOUBLE_MAX_PRECISION = 20
 DOUBLE_MIN_SCALE = 1
 DOUBLE_MAX_SCALE = 15
 
-
 # Диапазон количества знаков ДО разделителя, для типа REAL
 FLOAT_MIN_PRECISION = 1
 FLOAT_MAX_PRECISION = 10
@@ -122,10 +110,6 @@ FLOAT_MAX_PRECISION = 10
 # Диапазон количества знаков ПОСЛЕ разделителя, для типа REAL
 FLOAT_MIN_SCALE = 1
 FLOAT_MAX_SCALE = 6
-
-
-
-
 
 # Integer data types
 TINYINT_MIN = -128
@@ -143,8 +127,6 @@ INTEGER_MAX = 2147483647
 BIGINT_MIN = -9223372036854775808
 BIGINT_MAX = 9223372036854775807
 
-
-
 UN_TINYINT_MIN = 0
 UN_TINYINT_MAX = 255
 
@@ -160,7 +142,6 @@ UN_INTEGER_MAX = 4294967295
 UN_BIGINT_MIN = 0
 UN_BIGINT_MAX = 18446744073709551615
 
-
 # DateTime data types
 
 
@@ -172,7 +153,6 @@ UN_BIGINT_MAX = 18446744073709551615
 
 YEAR_MIN = '1600'
 YEAR_MAX = '9999'
-
 
 # Минимальное и максимальное значение для TIME ZONE
 # Ограничений нет.
@@ -186,7 +166,6 @@ ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'
             'V', 'W', 'X', 'Y', 'Z',
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
             'v', 'w', 'x', 'y', 'z', ' ']
-
 
 # Набор хексовых значений (получен из ALPHABET)
 ALPHABET_HEX = ['41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51',
@@ -238,6 +217,7 @@ SYNONYMS_DICT = {
     'smalldatetime': 'timestamp(0)',
 
     'timestamp with time zone': 'timestamp_tz',
+    'timetz':  'time_tz',
     'timestamp without time zone': 'timestamp',
     'time without time zone': 'time',
     'time with time zone': 'time_tz',
@@ -257,5 +237,13 @@ SYNONYMS_DICT = {
     'bit': 'boolean',
     'bool': 'boolean',
     'uniqueidentifier': 'binary(16)',
-    'float': 'real'
+    'float': 'real',
+    'float4': 'real',
+    'float8': 'double',
+
+    'int1': 'tinyint',
+    'int2': 'smallint',
+    'int8': 'bigint',
+    'int4': 'integer'
+
 }
