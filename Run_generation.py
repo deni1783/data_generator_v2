@@ -48,11 +48,11 @@ def count_rows(file):
     return cnt
 
 
-def run_process(cnt, file, table_object):
+def run_process(cnt, file, table_object, sorted_columns):
     f = open(file, 'w')
 
     for i in range(cnt):
-        arr = get_full_row_from_obj(table_object)
+        arr = get_full_row_from_obj(table_object, sorted_columns)
         st = ''
         for j in arr:
             st += j + DELIMITER_COLUMN
@@ -63,7 +63,7 @@ def run_process(cnt, file, table_object):
     f.close()
 
 
-def make_multiprocess(out_data_file, start_file_name, count_multiprocess, count_for_process, table_object):
+def make_multiprocess(out_data_file, start_file_name, count_multiprocess, count_for_process, table_object, sorted_columns):
     # Проверка параметров
     # out_data_file без расширения файла
     main_obj = {}
@@ -77,7 +77,7 @@ def make_multiprocess(out_data_file, start_file_name, count_multiprocess, count_
         main_obj[proc_id]['file_name'] = out_data_file + '_part_' + str(start_file) + OUTPUT_FILE_EXTENSIONS
         main_obj[proc_id]['process_obj'] = Process(target=run_process,
                                                    args=(
-                                                       count_for_process, main_obj[proc_id]['file_name'], table_object))
+                                                       count_for_process, main_obj[proc_id]['file_name'], table_object, sorted_columns))
         start_file += 1
     return main_obj
 
@@ -220,6 +220,7 @@ def get_object_from_ddl_file(ddl_file):
     """
 
     columns = {}
+    columns_arr_sorted = []
     line_number = 1
 
     error_obj = []
@@ -271,6 +272,8 @@ def get_object_from_ddl_file(ddl_file):
         else:
             dt_length, prec, scale = split_parameters(params)
 
+        columns_arr_sorted.append(column_name)
+
         columns[column_name] = {}
         columns[column_name]['data_type'] = dt_type
         columns[column_name]['dt_length'] = dt_length
@@ -284,18 +287,18 @@ def get_object_from_ddl_file(ddl_file):
     # if error_obj:
     #     err_str = '\n'.join(error_obj)
     #     return err_str, new_count_strings
-    return columns, new_count_strings, error_obj
+    return columns, columns_arr_sorted, new_count_strings, error_obj
 
 
 # Формирует массив сгенерированных данных для одной строки (return - result_arr: list)
-def get_full_row_from_obj(table_object):
+def get_full_row_from_obj(table_object, sorted_columns):
     """
     Создает массив сгенерированных данных для одной строки
     :param table_object:
     :return: result_arr: list
     """
     result_arr = []
-    for key in table_object:
+    for key in sorted_columns:
         column = table_object[key]
         col_data_type = column['data_type']
 
@@ -319,9 +322,9 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
     # Если это файлы из определенной директории, добавляем путь к имени файла
     if in_dir_name:
         in_file = os.path.normcase(in_dir_name + '/' + file_name)
-        table_object, new_cnt_str, err_arr = get_object_from_ddl_file(in_file)
+        table_object, sorted_columns, new_cnt_str, err_arr = get_object_from_ddl_file(in_file)
     else:
-        table_object, new_cnt_str, err_arr = get_object_from_ddl_file(file_name)
+        table_object, sorted_columns, new_cnt_str, err_arr = get_object_from_ddl_file(file_name)
 
     # Если была ошибка при парсинге файла, возвращаем текст ошибки и закрываем программу с кодом 1
     if err_arr:
@@ -355,7 +358,7 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
 
         # Генерируем объект для всех процессов
         main_obj = make_multiprocess(out_file_name, cnt_tmp_file_done, cnt_multiproc, count_strings_per_file,
-                                     table_object)
+                                     table_object, sorted_columns)
 
         # Запускаем процессы
         for key in main_obj:
