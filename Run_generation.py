@@ -244,6 +244,11 @@ def get_object_from_ddl_file(ddl_file):
             line_number += 1
             continue
 
+        # Пропускаем строки которые закомментированны
+        if line.strip()[:2] == '--':
+            line_number += 1
+            continue
+
         # data_type - промежуточная (не обработанная)
         column_name, tmp_data_type, is_nullable = pars_string_from_ddl(line)
 
