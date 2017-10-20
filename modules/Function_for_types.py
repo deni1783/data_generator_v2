@@ -47,6 +47,15 @@ else:
                                                int(MAX_TIME_ZONE_VALUES_OBJ['MINUTE']) * 60)
 
 
+def get_sequence(length=False, precision=False, scale=False, is_null=False):
+    # precision - стратовое значение
+    # scale - шаг для сиквенса
+    if not scale:
+        scale = 1
+    # print(length, precision, scale, is_null)
+    return str(int(precision) + int(scale))
+
+
 def get_char(length=False, precision=False, scale=False, is_null=False):
     if is_null:
         if random.randint(0, 100) + PERCENT_FOR_NULL_VALUES > 100:
@@ -115,6 +124,10 @@ def get_decimal(length=False, precision=False, scale=False, is_null=False):
     # Если scale нулевой то возвращаем только precision
     if not scale or int(scale) == 0:
         return str(random.randint(min_val, int('9' * int(precision))))
+    elif (int(precision) == int(scale)):
+        scale_max = int('9' * int(scale))
+        rnd_scale = random.randint(min_val, scale_max)
+        return '0.' + str(rnd_scale)
     else:
         prec_max = int('9' * (int(precision) - int(scale)))
         scale_max = int('9' * int(scale))

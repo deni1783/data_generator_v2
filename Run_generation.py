@@ -36,7 +36,9 @@ BASE_DATA_TYPES = {
     'un_integer': get_un_integer,
     'un_bigint': get_un_bigint,
 
-    'boolean': get_boolean
+    'boolean': get_boolean,
+
+    'sequence': get_sequence
 }
 
 
@@ -272,7 +274,7 @@ def get_object_from_ddl_file(ddl_file):
             error_obj.append('Error at line ' + str(line_number) + ' data type: "' + dt_type + '" is not supported!')
             line_number += 1
             continue
-        if dt_type == 'decimal':
+        if dt_type == 'decimal' or dt_type == 'sequence':
             dt_length, prec, scale = split_parameters(params, is_decimal=True)
         else:
             dt_length, prec, scale = split_parameters(params)

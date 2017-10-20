@@ -228,6 +228,7 @@ SYNONYMS_DICT = {
     'byte': 'binary',
     'varbyte': 'binary',
     'bytea': 'binary',
+    'raw': 'binary',
 
     'blob': 'binary({})'.format(MAX_LENGTH_BLOB),
 
