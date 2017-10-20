@@ -50,22 +50,43 @@ def count_rows(file):
     return cnt
 
 
-def run_process(cnt, file, table_object, sorted_columns):
+def run_process(cnt, file, table_object, sorted_columns, file_number=False, is_sequence=False, OBJ_FOR_SEQUENCE=False):
     f = open(file, 'w')
-
-    for i in range(cnt):
-        arr = get_full_row_from_obj(table_object, sorted_columns)
-        st = ''
-        for j in arr:
-            st += j + DELIMITER_COLUMN
-        # Убираем лишний последний разделитель между колонками
-        result_string = st[: st.find(DELIMITER_COLUMN, -1)]
-        f.write(result_string + DELIMITER_ROW)
+    if is_sequence:
+        for i in range(cnt):
+            if i == 0:
+                arr = get_full_row_from_obj_with_sequence(table_object, sorted_columns,
+                                                          OBJ_FOR_SEQUENCE['file_' + str(file_number)] - OBJ_FOR_SEQUENCE['sequence_step'],
+                                                          OBJ_FOR_SEQUENCE['sequence_step'])
+                st = ''
+                for j in arr:
+                    st += j + DELIMITER_COLUMN
+                # Убираем лишний последний разделитель между колонками
+                result_string = st[: st.find(DELIMITER_COLUMN, -1)]
+                f.write(result_string + DELIMITER_ROW)
+            else:
+                arr = get_full_row_from_obj_with_sequence(table_object, sorted_columns, OBJ_FOR_SEQUENCE['file_' + str(file_number)], OBJ_FOR_SEQUENCE['sequence_step'])
+                st = ''
+                for j in arr:
+                    st += j + DELIMITER_COLUMN
+                # Убираем лишний последний разделитель между колонками
+                result_string = st[: st.find(DELIMITER_COLUMN, -1)]
+                f.write(result_string + DELIMITER_ROW)
+                OBJ_FOR_SEQUENCE['file_' + str(file_number)] += OBJ_FOR_SEQUENCE['sequence_step']
+    else:
+        for i in range(cnt):
+            arr = get_full_row_from_obj(table_object, sorted_columns)
+            st = ''
+            for j in arr:
+                st += j + DELIMITER_COLUMN
+            # Убираем лишний последний разделитель между колонками
+            result_string = st[: st.find(DELIMITER_COLUMN, -1)]
+            f.write(result_string + DELIMITER_ROW)
 
     f.close()
 
 
-def make_multiprocess(out_data_file, start_file_name, count_multiprocess, count_for_process, table_object, sorted_columns):
+def make_multiprocess(out_data_file, start_file_name, count_multiprocess, count_for_process, table_object, sorted_columns, is_sequence_exist=False, OBJ_FOR_SEQUENCE=False):
     # Проверка параметров
     # out_data_file без расширения файла
     main_obj = {}
@@ -79,7 +100,7 @@ def make_multiprocess(out_data_file, start_file_name, count_multiprocess, count_
         main_obj[proc_id]['file_name'] = out_data_file + '_part_' + str(start_file) + OUTPUT_FILE_EXTENSIONS
         main_obj[proc_id]['process_obj'] = Process(target=run_process,
                                                    args=(
-                                                       count_for_process, main_obj[proc_id]['file_name'], table_object, sorted_columns))
+                                                       count_for_process, main_obj[proc_id]['file_name'], table_object, sorted_columns, start_file, is_sequence_exist, OBJ_FOR_SEQUENCE))
         start_file += 1
     return main_obj
 
@@ -316,6 +337,27 @@ def get_full_row_from_obj(table_object, sorted_columns):
     return result_arr
 
 
+# Формирует массив сгенерированных данных для одной строки (return - result_arr: list)
+def get_full_row_from_obj_with_sequence(table_object, sorted_columns, sequence_start, sequence_step):
+    """
+    Создает массив сгенерированных данных для одной строки
+    :param table_object:
+    :return: result_arr: list
+    """
+    result_arr = []
+    for key in sorted_columns:
+        column = table_object[key]
+        col_data_type = column['data_type']
+        if col_data_type == 'sequence':
+            column['precision'] = sequence_start
+            column['scale'] = sequence_step
+        result_arr.append(BASE_DATA_TYPES[col_data_type](column['dt_length'],
+                                                         column['precision'],
+                                                         column['scale'],
+                                                         column['is_nullable']))
+    return result_arr
+
+
 def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_name=''):
     started_time = time.time()
     base_file_name = os.path.basename(file_name)
@@ -354,6 +396,39 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
     # Счетчик готовых промежуточных файлов
     cnt_tmp_file_done = 0
 
+    # Проверяем наличие колонки с сиквенсом
+    is_sequence_exist = False
+    cnt_sequence = 0
+    for key in table_object:
+        if 'sequence' in table_object[key]['data_type']:
+            if cnt_sequence > 1:
+                break
+
+            is_sequence_exist = True
+            cnt_sequence += 1
+            sequence_start = int(table_object[key]['precision'])
+
+            # Устанавливаем по умолчанию шаг для сиквенса = 1
+            if not table_object[key]['scale']:
+                table_object[key]['scale'] = 1
+
+            sequence_step = int(table_object[key]['scale'])
+
+    if is_sequence_exist and cnt_sequence > 1:
+        print('Error. The DML script consists of more than one type of sequence data!')
+        exit(1)
+
+    if is_sequence_exist:
+        OBJ_FOR_SEQUENCE = {}
+        rows_per_file = COUNT_STRINGS // COUNT_OUTPUT_FILE
+        OBJ_FOR_SEQUENCE['sequence_step'] = int(sequence_step)
+        for i in range(COUNT_OUTPUT_FILE):
+            if i == 0:
+                OBJ_FOR_SEQUENCE['file_' + str(i)] = sequence_start
+            else:
+                OBJ_FOR_SEQUENCE['file_' + str(i)] = OBJ_FOR_SEQUENCE['file_' + str(i-1)] + rows_per_file * sequence_step
+    print(OBJ_FOR_SEQUENCE)
+
     # Цикл создания процессов
     while cnt_tmp_file_done < COUNT_OUTPUT_FILE:
         # Если количество оставшихся необработанных промежуточных файлов меньше чем количество максимальных процессов,
@@ -365,7 +440,7 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
 
         # Генерируем объект для всех процессов
         main_obj = make_multiprocess(out_file_name, cnt_tmp_file_done, cnt_multiproc, count_strings_per_file,
-                                     table_object, sorted_columns)
+                                     table_object, sorted_columns, is_sequence_exist, OBJ_FOR_SEQUENCE)
 
         # Запускаем процессы
         for key in main_obj:

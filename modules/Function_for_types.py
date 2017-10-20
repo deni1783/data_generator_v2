@@ -50,9 +50,6 @@ else:
 def get_sequence(length=False, precision=False, scale=False, is_null=False):
     # precision - стратовое значение
     # scale - шаг для сиквенса
-    if not scale:
-        scale = 1
-    # print(length, precision, scale, is_null)
     return str(int(precision) + int(scale))
 
 
