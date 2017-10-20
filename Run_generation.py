@@ -406,12 +406,14 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
 
             is_sequence_exist = True
             cnt_sequence += 1
-            sequence_start = int(table_object[key]['precision'])
 
             # Устанавливаем по умолчанию шаг для сиквенса = 1
             if not table_object[key]['scale']:
                 table_object[key]['scale'] = 1
+            if not table_object[key]['precision']:
+                table_object[key]['precision'] = 1
 
+            sequence_start = int(table_object[key]['precision'])
             sequence_step = int(table_object[key]['scale'])
 
     if is_sequence_exist and cnt_sequence > 1:
@@ -427,7 +429,6 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
                 OBJ_FOR_SEQUENCE['file_' + str(i)] = sequence_start
             else:
                 OBJ_FOR_SEQUENCE['file_' + str(i)] = OBJ_FOR_SEQUENCE['file_' + str(i-1)] + rows_per_file * sequence_step
-    print(OBJ_FOR_SEQUENCE)
 
     # Цикл создания процессов
     while cnt_tmp_file_done < COUNT_OUTPUT_FILE:
