@@ -420,6 +420,8 @@ def start_generation_for_single_file(file_name: str, out_dir_name='', in_dir_nam
         print('Error. The DML script consists of more than one type of sequence data!')
         exit(1)
 
+    OBJ_FOR_SEQUENCE = False
+
     if is_sequence_exist:
         OBJ_FOR_SEQUENCE = {}
         rows_per_file = COUNT_STRINGS // COUNT_OUTPUT_FILE
